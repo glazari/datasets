@@ -49,6 +49,24 @@ def load_SVHN(folder='SVHN/'):
     
     return train_set, test_set
 
+def _download_SVHN():
+    
+    _make(main_folder)
+    
+    folder = main_folder+'SVHN/'
+    
+    print('downloading SVHN... (235Mb This may take a while)')
+    
+    os.mkdir(folder)
+    
+    print('downloading trainset....')
+    download_link = 'http://ufldl.stanford.edu/housenumbers/train_32x32.mat'
+    f, m = urllib.request.urlretrieve(download_link, folder+'train_32x32.mat')
+    
+    print('downloading testset....')
+    download_link = 'http://ufldl.stanford.edu/housenumbers/test_32x32.mat'
+    f, m = urllib.request.urlretrieve(download_link, folder+'test_32x32.mat')
+
 def load_Cifar_10(folder='cifar-10-batches-py/'):
     folder = main_folder+folder
     
@@ -89,24 +107,6 @@ def load_Cifar_10(folder='cifar-10-batches-py/'):
     
     return train, test
 
-def _download_SVHN():
-    
-    _make(main_folder)
-    
-    folder = main_folder+'SVHN/'
-    
-    print('downloading SVHN... (235Mb This may take a while)')
-    
-    os.mkdir(folder)
-    
-    print('downloading trainset....')
-    download_link = 'http://ufldl.stanford.edu/housenumbers/train_32x32.mat'
-    f, m = urllib.request.urlretrieve(download_link, folder+'train_32x32.mat')
-    
-    print('downloading testset....')
-    download_link = 'http://ufldl.stanford.edu/housenumbers/test_32x32.mat'
-    f, m = urllib.request.urlretrieve(download_link, folder+'test_32x32.mat')
-
 def _download_Cifar_10():
     
     _make(main_folder)
@@ -123,6 +123,26 @@ def _download_Cifar_10():
     
     os.remove(download_file)
 
+def load_MNIST(folder='MNIST/'):
+    folder = main_folder+folder    
+    
+    #Tensor flow has a nice API for downloading mnist. In the future I will 
+    #use an aproach that does not rely on tf.
+    import tensorflow.examples.tutorials.mnist.input_data as input_data
+    
+    #this function already downloads the files if they are not present
+    mnist = input_data.read_data_sets(folder, one_hot=True)
+    train_set = (mnist.train.images, mnist.train.labels)
+    test_set = (mnist.test.images, mnist.test.labels)
+    
+    return (train_set, test_set)
+
+    
+def _download_MNIST(folder='MNIST/'):
+    folder = main_folder+folder
+    
+    import tensorflow.examples.tutorials.mnist.input_data as input_data
+    _ = input_data.read_data_sets(folder, one_hot=True)
 
 def batches(X,y,batch_size=128):
     assert len(X) == len(y)
