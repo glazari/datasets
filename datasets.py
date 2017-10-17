@@ -31,6 +31,7 @@ def load_SVHN(folder='SVHN/'):
     train_name = folder+'train_32x32.mat'
     mat = scipy.io.loadmat(train_name)
     train_x = mat['X'].transpose([3,0,1,2])
+    train_x = train_x.reshape((-1,32*32*3))
     y = mat['y']
     y[y==10] = 0
     train_y = create_1_hot(y)
@@ -39,6 +40,7 @@ def load_SVHN(folder='SVHN/'):
     test_name = folder+'test_32x32.mat'
     mat = scipy.io.loadmat(test_name)
     test_x = mat['X'].transpose([3,0,1,2])
+    test_x = test_x.reshape((-1,32*32*3))
     y = mat['y']
     y[y==10] = 0
     test_y = create_1_hot(y)
