@@ -3,6 +3,7 @@ import scipy.io
 import os
 import urllib
 import tarfile
+import zipfile
 
 import matplotlib.pyplot as plt
 
@@ -141,10 +142,60 @@ def load_MNIST(folder='MNIST/'):
 
     
 def _download_MNIST(folder='MNIST/'):
+    _make(main_folder)
+    
     folder = main_folder+folder
     
     import tensorflow.examples.tutorials.mnist.input_data as input_data
     _ = input_data.read_data_sets(folder, one_hot=True)
+    
+def load_Traffic_Sings(folder='Traffic_Signs/'):
+    folder = main_folder+folder
+    
+    if not os.path.isdir(folder):
+        _download_Traffic_Signs()
+    
+    # Load pickled data
+    import pickle
+
+    training_file = folder + '/train.p'
+    validation_file= folder + '/valid.p'
+    testing_file =  folder + '/test.p'
+
+    with open(training_file, mode='rb') as f:
+        train = pickle.load(f)
+    with open(validation_file, mode='rb') as f:
+        valid = pickle.load(f)
+    with open(testing_file, mode='rb') as f:
+        test = pickle.load(f)
+
+    train_set = (train['features'], train['labels'])
+    val_set = (valid['features'], valid['labels'])
+    test_set = (test['features'], test['labels'])
+    
+    return train_set, val_set, test_set
+    
+    
+def _download_Traffic_Signs(folder='Traffic_Signs/'):
+    _make(main_folder)
+    
+    folder = main_folder+folder
+    
+    download_link = 'https://d17h27t6h515a5.cloudfront.net\
+/topher/2017/February/5898cd6f_traffic-signs-data/traffic-signs-data.zip'
+    
+    file = folder+'traffic-signs-data.zip'
+    
+    print('downloading Traffic_Signs database... (118Mb this may take a while)')
+    f, m = urllib.request.urlretrieve(download_link, file)
+    zip_ref = zipfile.ZipFile(file, 'r')
+    zip_ref.extractall(folder)
+    zip_ref.close()
+    
+    os.remove(file)
+    
+    
+    
 
 def batches(X,y,batch_size=128):
     assert len(X) == len(y)
